@@ -1,0 +1,523 @@
+<!-- Parent Pom for all skuzzle GitHub Projects -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.skuzzle</groupId>
+    <artifactId>skuzzle-parent</artifactId>
+    <version>4.0.0-rc1</version>
+    <packaging>pom</packaging>
+
+    <name>skuzzle-parent</name>
+    <description>Parent POM for all skuzzle GitHub Projects</description>
+    <inceptionYear>2014</inceptionYear>
+    <url>https://github.com/skuzzle-parent</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <github.user>skuzzle</github.user>
+        <github.name>skuzzle-parent</github.name>
+        <github.release-token>Release Token not set</github.release-token>
+        <github.main-branch>master</github.main-branch>
+        <github.dev-branch>dev</github.dev-branch>
+
+        <site.name>skuzzle-parent</site.name>
+
+        <!-- Name of the SCM profile in the settings.xml -->
+        <project.scm.id>github</project.scm.id>
+
+        <!-- Tests -->
+        <skipIT>false</skipIT>
+
+        <!-- Java Version -->
+        <java.version>11</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+
+        <!-- Versions -->
+        <maven.compiler.version>3.11.0</maven.compiler.version>
+        <maven.surefire.version>3.1.2</maven.surefire.version>
+        <maven.failsafe.version>3.1.2</maven.failsafe.version>
+        <maven.gpg-plugin.version>3.1.0</maven.gpg-plugin.version>
+        <maven.javadoc-plugin.version>3.5.0</maven.javadoc-plugin.version>
+        <maven.source-plugin.version>3.3.0</maven.source-plugin.version>
+        <maven.jar-plugin.version>3.3.0</maven.jar-plugin.version>
+        <maven.dependency-plugin.version>3.6.0</maven.dependency-plugin.version>
+        <maven.build-helper-plugin.version>3.4.0</maven.build-helper-plugin.version>
+        <coveralls.plugin.version>4.3.0</coveralls.plugin.version>
+        <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
+        <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version>
+        <gitflow-maven-plugin.version>1.20.0</gitflow-maven-plugin.version>
+        <github-release-maven-plugin.version>1.0.6</github-release-maven-plugin.version>
+
+        <!-- Dependency Analyzer -->
+        <!-- Fail if dependencies have not been declared explicitly -->
+        <failOnWarning>true</failOnWarning>
+        <ignoreNonCompile>true</ignoreNonCompile>
+
+        <!-- Nexus Deploy -->
+        <skipDeploy>false</skipDeploy>
+
+        <!-- Site Deploy -->
+        <maven.site.skip>true</maven.site.skip>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <url>http://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- GitHub Issues, CI and SCM -->
+    <issueManagement>
+        <system>GitHub</system>
+        <url>http://github.com/skuzzle/${github.name}/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis-CI</system>
+        <url>https://travis-ci.org/skuzzle/${github.name}</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/skuzzle/${github.name}.git</connection>
+        <developerConnection>scm:git:https://github.com/skuzzle/${github.name}.git</developerConnection>
+        <url>https://github.com/skuzzle/${github.name}</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>simon</id>
+            <name>Simon Taddiken</name>
+            <email>github@skuzzle.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <properties>
+                <picUrl>http://www.random.skuzzle.de/fuck_yeah.png</picUrl>
+            </properties>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <!-- Enable OSS Sonatype SNAPSHOTS -->
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Compile sources -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                    <configuration>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.12.1</version>
+                    <configuration>
+                        <skip>${maven.site.skip}</skip>
+                        <skipDeploy>true</skipDeploy>
+                    </configuration>
+                </plugin>
+                <!-- Deploy test Coverage to Coveralls -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.2.3</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- Configure test coverage -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-code-coverage-unit-tests</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <configuration>
+                                <append>false</append>
+                                <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>prepare-code-coverage-integration-tests</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                            <configuration>
+                                <append>false</append>
+                                <skip>${skipIT}</skip>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>merge-coverage</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>merge</goal>
+                            </goals>
+                            <configuration>
+                                <fileSets>
+                                    <fileSet>
+                                        <directory>${project.build.directory}</directory>
+                                        <includes>
+                                            <include>jacoco-ut.exec</include>
+                                            <include>jacoco-it.exec</include>
+                                        </includes>
+                                    </fileSet>
+                                </fileSets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- package java doc into jar file -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc-plugin.version}</version>
+                    <configuration>
+                        <tags>
+                            <tag>
+                                <name>apiNote</name>
+                                <placement>a</placement>
+                                <head>API Note:</head>
+                            </tag>
+                            <tag>
+                                <name>implSpec</name>
+                                <placement>a</placement>
+                                <head>Implementation Requirements:</head>
+                            </tag>
+                            <tag>
+                                <name>implNote</name>
+                                <placement>a</placement>
+                                <head>Implementation Note:</head>
+                            </tag>
+                        </tags>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>fix-java-doc</id>
+                            <goals>
+                                <goal>fix</goal>
+                            </goals>
+                            <configuration>
+                                <defaultAuthor>Simon Taddiken</defaultAuthor>
+                                <defaultVersion>${project.version}</defaultVersion>
+                                <excludes>**/*Test.java,**/*IT.java</excludes>
+                                <fixTags/>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- package sources into jar file -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Package tests into jar file -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-tests</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Dependency Analysis: force explicit dependency declaration -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven.dependency-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>analyze-dependencies</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>analyze-only</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Unit Tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+                <!-- Integration Tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven.failsafe.version}</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Signing artifacts -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven.gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                    <arg>--batch</arg>
+                                </gpgArguments>
+                                <keyname>simon.taddiken@gmail.com</keyname>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Deploy to Sonatype -->
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>sonatype-nexus-snapshots</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        <skipNexusStagingDeployMojo>${skipDeploy}</skipNexusStagingDeployMojo>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.amashchenko.maven.plugin</groupId>
+                    <artifactId>gitflow-maven-plugin</artifactId>
+                    <version>${gitflow-maven-plugin.version}</version>
+                    <configuration>
+                        <indentSize>4</indentSize>
+                        <lineLength>120</lineLength>
+                        <postReleaseGoals>deploy</postReleaseGoals>
+                        <skipTestProject>true</skipTestProject>
+                        <detail>true</detail>
+                        <verbose>true</verbose>
+                        <gitFlowConfig>
+                            <productionBranch>${github.main-branch}</productionBranch>
+                            <developmentBranch>${github.dev-branch}</developmentBranch>
+                            <versionTagPrefix>v</versionTagPrefix>
+                        </gitFlowConfig>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.ragedunicorn.tools.maven</groupId>
+                    <artifactId>github-release-maven-plugin</artifactId>
+                    <version>${github-release-maven-plugin.version}</version>
+                    <configuration>
+                        <owner>${github.user}</owner>
+                        <repository>${github.name}</repository>
+                        <authToken>${github.release-token}</authToken>
+                        <tagName>v${project.version}</tagName>
+                        <name>${project.version}</name>
+                        <targetCommitish>${github.main-branch}</targetCommitish>
+                    </configuration>
+                </plugin>
+
+                <!-- package release files -->
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.6.0</version>
+                    <configuration>
+                        <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                        <appendAssemblyId>false</appendAssemblyId>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <reporting>
+        <plugins>
+            <!-- Generate JavaDoc Reports -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <id>report-java-doc</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <!-- Generate Coverage Reports -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <id>report-coverage</id>
+                        <reports>
+                            <report>report</report>
+                            <report>report-integration</report>
+                        </reports>
+                        <configuration>
+                            <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                        </configuration>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <!-- only for releasing skuzzle-parent but not extending projects -->
+        <profile>
+            <id>release-this</id>
+            <build>
+                <plugins>
+                    <!-- Enable signing and sonatype deploy -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.amashchenko.maven.plugin</groupId>
+                        <artifactId>gitflow-maven-plugin</artifactId>
+                        <configuration>
+                            <postReleaseGoals>deploy</postReleaseGoals>
+                            <skipTestProject>true</skipTestProject>
+                            <verbose>true</verbose>
+                            <details>true</details>
+                            <gitFlowConfig>
+                                <productionBranch>master</productionBranch>
+                                <developmentBranch>dev</developmentBranch>
+                            </gitFlowConfig>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>skuzzle.release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Enable signing and sonatype deploy -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+                    <!-- Enable javadoc and source artifact (required for maven deploy) -->
+                    <!-- package java doc into jar file -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <!-- package sources into jar file -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
